@@ -1,0 +1,21 @@
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.o
+
+# Executables
+city_manager
+*.out
+*.exe
+
+# Application specific generated files
+*.bin
+*.log
+
+# Ignore OS-generated files
+.DS_Store
+Thumbs.db
+
+# Ignore VS Code local workspace settings (optional but recommended)
+.vscode/
