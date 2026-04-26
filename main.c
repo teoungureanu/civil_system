@@ -10,6 +10,9 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
+    verify_district_symlink(&context);
+    // check for dagling syslinks
+
     if (!setup_and_log_action(&context)) {
         return 1;
     }
@@ -18,8 +21,16 @@ int main(int argc, char *argv[]) {
         add_report(&context);
     } else if (strcmp(context.command, "list") == 0) {
         list_reports(&context);
+    } else if (strcmp(context.command, "view") == 0) {
+        view_report(&context);
+    } else if (strcmp(context.command, "remove_report") == 0) {
+        remove_report(&context);
+    } else if (strcmp(context.command, "update_threshold") == 0) {
+        update_threshold(&context);
+    } else if (strcmp(context.command, "filter") == 0) {
+        filter_reports(&context, argc, argv);
     } else {
-        printf("comanda '%s' inca nu este implementata\n", context.command);
+        printf("Comanda invalida.\n", context.command);
     }
 
     return 0;

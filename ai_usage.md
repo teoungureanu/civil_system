@@ -1,0 +1,26 @@
+Am folosit Gemini Pro 3.1 pentru implementarea functiilor ajutatoare pentru functia filter.
+
+Prompt 1
+"Scrie o functie în C cu semnatura int parse_condition(const char *input, char *field, char *op, char *value) care primeste un string constant de forma 'field:operator:value' si il sparge în 3 buffere separate. nu folosi strtok deoarece nu vreau să modific string-ul original"
+
+Prompt 2 
+"Scrie o functie in C cu semnatura int match_condition(Report *r, const char *field, const char *op, const char *value) care primește un pointer la o structura binara report si cele 3 stringuri extrase anterior. Structura contine int severity  time_t timestamp si stringuri pentru category si inspector_name. Functia trebuie sa aplice operatorul (ex: >=, ==) si sa returneze 1 daca e o potrivire."
+
+Output initial
+Problemele pe care le-am observat initial
+1.In match_condition, AI-ul incerca initial sa compare stringul value direct cu valorile din structura
+(ulterior am vazut ca asta e mentionat la sectiunea de hints din document :D )
+2.Codul generat folosea strict operatorii matematici. Acest lucru facea ca rularea din terminal (severity:>=:2) sa fie interpretata de shell ca o redirectionare de output in fisier
+
+
+Pentru a corecta aceste aspecte, am ghidat AI-ul cu următoarele prompturi:
+
+Prompt 3
+"Ai gresit la conversia tipurilor. Modifica match_condition astfel incat sa converteasca value la int pentru severity si la long long pentru timestamp , inainte de a face comparatia."
+
+Prompt 4
+"Cand filtrul are caracterul >, se creeaza  un fisier si redirecteaza output acolo in loc sa fie trimis ca argument. Adapteaza match_condition ca sa accepte acesti operatori."
+
+
+
+Am invatat ca ai AI tinde sa se concentreze strict pe limbajul cerut (C), izoland de mediul de executie , de asta nu a anticipat problema redirectionarilor.

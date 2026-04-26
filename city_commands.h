@@ -9,12 +9,13 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <errno.h>
 
 #define MAX_NAME_LEN 50
 #define MAX_CAT_LEN 30
 #define MAX_DESC_LEN 152
 
-//50 + 30 + 152 + 24 = 256 bytes/report
+
 
 typedef struct {
     int id;                              //4 bytes
@@ -44,5 +45,17 @@ int has_permission(mode_t mode, const char *role, int manager_bit, int inspector
 void add_report(AppContext *context);
 void list_reports(AppContext *context);
 void view_report(AppContext *context);
+void remove_report(AppContext *context);
+void check_and_alert_severity(const char *district, int severity);
+int check_symlink(const char *filepath);
+void verify_district_symlink(AppContext *context);
+void update_threshold(AppContext *context);
+
+//ai generated helper functions for filter command
+int parse_condition(const char *input, char *field, char *op, char *value);
+int match_condition(Report *r, const char *field, const char *op, const char *value);
+
+void filter_reports(AppContext *context, int argc, char *argv[]);
+
 
 #endif 
