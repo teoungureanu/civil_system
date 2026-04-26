@@ -37,6 +37,12 @@ typedef struct {
 } AppContext;
 //organizam datele date in linia de comanda
 
+void mode_to_string(mode_t mode, char *str);
 void parse_arguments(int argc, char *argv[], AppContext *context);
+int setup_and_log_action(AppContext *context);
+int has_permission(mode_t mode, const char *role, int manager_bit, int inspector_bit);
+void add_report(AppContext *context);
+void list_reports(AppContext *context);
+void view_report(AppContext *context);
 
 #endif 
