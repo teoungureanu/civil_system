@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
 #include <fcntl.h>
 #include <errno.h>
 
@@ -50,6 +51,7 @@ void check_and_alert_severity(const char *district, int severity);
 int check_symlink(const char *filepath);
 void verify_district_symlink(AppContext *context);
 void update_threshold(AppContext *context);
+void remove_district(AppContext *context);
 
 //ai generated helper functions for filter command
 int parse_condition(const char *input, char *field, char *op, char *value);

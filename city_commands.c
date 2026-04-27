@@ -55,6 +55,11 @@ void parse_arguments(int argc, char *argv[], AppContext *context) {
             strncpy(context->extra_arg, argv[i + 2], sizeof(context->extra_arg) - 1);
             i+=2;
         }
+        else if (strcmp(argv[i], "--remove_district") == 0 && i + 1 < argc) {
+            strncpy(context->command, "remove_district", sizeof(context->command) - 1);
+            strncpy(context->district, argv[i + 1], sizeof(context->district) - 1);
+            i++;
+        }
 
     }
 }
@@ -592,4 +597,35 @@ void filter_reports(AppContext *context, int argc, char *argv[]) {
     if (found_count == 0) printf("  (Niciun raport nu indeplineste toate conditiile)\n");
     printf("\n\n");
     close(fd);
+}
+
+void remove_district(AppContext *context) {
+    if(strcmp(context->role, "manager") != 0) {
+        printf("Eroare: Doar managerii pot sterge un district\n");
+        return;
+    }
+    char sym_path[256];
+    snprintf(sym_path, sizeof(sym_path), "active_reports-%s", context->district);
+
+    unlink(sym_path); 
+    pid_t pid = fork();
+    if (pid == -1) {
+        printf("Eroare: Nu s-a putut crea procesul copil\n");
+        return;
+    }
+    else if( pid == 0) {
+        execlp("rm", "rm", "-rf", context->district, NULL);
+        printf("Eroare la executie\n");
+        return;
+    }
+    else {
+        int status;
+        wait(&status);
+        if(WIFEXITED(status) && WEXITSTATUS(status) == 0) {
+            printf("Districtul %s a fost sters cu succes\n", context->district);
+        } else {
+            printf("Eroare la stergerea districtului %s.\n", context->district);
+        }
+    }
+    
 }

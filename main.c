@@ -29,8 +29,10 @@ int main(int argc, char *argv[]) {
         update_threshold(&context);
     } else if (strcmp(context.command, "filter") == 0) {
         filter_reports(&context, argc, argv);
+    } else if(strcmp(context.command, "remove_district") == 0) {
+        remove_district(&context);
     } else {
-        printf("Comanda invalida.\n", context.command);
+        printf("Comanda \"%s\" e invalida.\n", context.command);
     }
 
     return 0;
