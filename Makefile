@@ -2,16 +2,13 @@ CC = gcc
 CFLAGS = -Wall -g
 TARGET = city_manager
 
-all: $(TARGET)
+all: city_manager monitor_reports
 
-$(TARGET): main.o city_commands.o
-	$(CC) $(CFLAGS) -o $(TARGET) main.o city_commands.o
+city_manager: main.o city_commands.o 
+	$(CC) -o city_manager main.o city_commands.o 
 
-main.o: main.c city_commands.h
-	$(CC) $(CFLAGS) -c main.c
-
-city_commands.o: city_commands.c city_commands.h
-	$(CC) $(CFLAGS) -c city_commands.c
+monitor_reports: monitor_reports.c
+	$(CC) -o monitor_reports monitor_reports.c
 
 clean:
-	rm -f *.o $(TARGET)
+	rm -f *.o city_manager monitor_reports .monitor_pid

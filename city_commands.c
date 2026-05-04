@@ -146,6 +146,8 @@ void add_report(AppContext *context) {
     struct stat sym_st;
     Report rep;
 
+
+
     snprintf(dat_path, sizeof(dat_path), "%s/reports.dat", context->district);
     snprintf(cfg_path, sizeof(cfg_path), "%s/district.cfg", context->district);
     snprintf(sym_path, sizeof(sym_path), "active_reports-%s", context->district);
@@ -210,8 +212,39 @@ void add_report(AppContext *context) {
 
     write(fd, &rep, sizeof(Report));
     close(fd);
-
     printf("Raport adaugat cu succes! ID: %d\n", id);
+    // PHASE 2: trimitem semnal catre monitor pentru a anunta adaugarea unui nou raport
+    int monitor_notified = 0;
+    int pid_fd = open(".monitor_pid", O_RDONLY); // deschidem fisierul in care monitorul isi stocheaza PID-ul pentru a citi si a trimite semnalul
+    if (pid_fd != -1) {
+        char pid_buffer[32];
+        ssize_t bytes_read = read(pid_fd, pid_buffer, sizeof(pid_buffer) - 1); // citim PID-ul monitorului din fisier
+        if(bytes_read > 0) { 
+            pid_buffer[bytes_read] = '\0';
+            pid_t monitor_pid = (pid_t)atoi(pid_buffer); // convertim stringul citit intr-un PID
+            if (kill(monitor_pid, SIGUSR1) == 0) { // trimitem semnalul SIGUSR1 folosit pentru a transmite notificarea 
+                monitor_notified = 1;      // daca kill returneaza 0, inseamna ca semnalul a fost trimis cu succes
+            }
+
+            
+        }
+        close(pid_fd);
+    }
+
+    char log_path[256]; 
+    snprintf(log_path, sizeof(log_path), "%s/logged_district", context->district);  
+    int log_fd = open(log_path, O_WRONLY | O_CREAT | O_APPEND, 0644);  
+    if (log_fd != -1) {
+        char log_msg[256];
+        if (monitor_notified) { // daca am reusit sa anuntam monitorul, logam acest lucru
+            snprintf(log_msg, sizeof(log_msg), "Raport ID %d adaugat. Monitor notificat cu succes.\n", id);
+        } else { //nu am reusit sa anuntam deci logam eroarea
+            snprintf(log_msg, sizeof(log_msg), "Raport ID %d adaugat. Eroare: Monitorul nu a putut fi informat.\n", id);
+        }
+        write(log_fd, log_msg, strlen(log_msg)); 
+        close(log_fd);
+    }
+
 }
 
 
@@ -629,3 +662,5 @@ void remove_district(AppContext *context) {
     }
     
 }
+
+
