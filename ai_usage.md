@@ -21,6 +21,6 @@ Prompt 3
 Prompt 4
 "Cand filtrul are caracterul >, se creeaza  un fisier si redirecteaza output acolo in loc sa fie trimis ca argument. Adapteaza match_condition ca sa accepte acesti operatori."
 
-
+Pe parcursul proiectului, am folosit Visual Studio Code, cu Intellisense Code Completion (nu stiu daca intra la categoria de AI, mentionez in orice eventualitate).
 
 Am invatat ca ai AI tinde sa se concentreze strict pe limbajul cerut (C), izoland de mediul de executie , de asta nu a anticipat problema redirectionarilor.
