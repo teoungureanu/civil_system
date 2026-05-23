@@ -37,7 +37,7 @@ Am intrebat cum se face trecerea de la un descriptor de fisier returnat de pipe(
 
 PHASE 3
 
-La fel ca la phase 2, am folosit AI pentru explicatii 
+La fel ca la phase 2, am folosit AI pentru explicatii si intrebari
 
 Am intrebat de ce dimensiunea pe disc pentru doua rapoarte era de exact 528 bytes, desi suma campurilor din structura mea(city_commands.h) era de 256 bytes. Raspunsul a fost ca compilatorul gcc insereaza 8 bytes de umplutura pentru alinierea campului timestamp (time_t) pe arhitecturi de 64 de biti, structura avand de fapt 264 bytes.
 
