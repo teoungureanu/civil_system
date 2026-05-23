@@ -10,7 +10,7 @@ volatile sig_atomic_t keep_running = 1;
 
 
 void handle_sigint(int sig) {
-    const char *msg = "\nINF_STOP:Monitor received SIGINT. Shutting down.\n";
+    const char *msg = "INF_STOP:Monitor received SIGINT. Shutting down.\n";
     // modificam mesajul, pentru a fi citit mai usor de programul parinte
     // file descriptorul STDOUT_FILENO reprezinta stdout
     write(STDOUT_FILENO, msg, strlen(msg));
@@ -46,7 +46,7 @@ int main() {
             pid_t existing_pid = (pid_t)atoi(pid_buf);     
             if(kill(existing_pid, 0) == 0) { //verificam daca procesul cu PID-ul citit exista
                 char err_msg[128];
-                int len = snprintf(err_msg, sizeof(err_msg), "Eroare, ERR_PID:%d\n", existing_pid);
+                int len = snprintf(err_msg, sizeof(err_msg), "ERR_PID:%d\n", existing_pid);
                 write(STDOUT_FILENO, err_msg, len);
                 close(check_fd);
                 exit(1);
@@ -66,7 +66,7 @@ int main() {
         close(fd);
     }
 
-    const char *start_msg = "Monitor running. Waiting for signals..\n";
+    const char *start_msg = "INF_START:Monitor running. Waiting for signals..\n";
     write(STDOUT_FILENO, start_msg, strlen(start_msg));
     // asteptam semnale pana cand primim SIGINT, moment in care setam keep_running la 0 si iesim din loop
     while (keep_running) {

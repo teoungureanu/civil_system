@@ -146,8 +146,6 @@ void add_report(AppContext *context) {
     struct stat sym_st;
     Report rep;
 
-
-
     snprintf(dat_path, sizeof(dat_path), "%s/reports.dat", context->district);
     snprintf(cfg_path, sizeof(cfg_path), "%s/district.cfg", context->district);
     snprintf(sym_path, sizeof(sym_path), "active_reports-%s", context->district);
@@ -159,6 +157,12 @@ void add_report(AppContext *context) {
             chmod(dat_path, 0664);
             stat(dat_path, &dat_st);
         }
+    }
+
+    
+    if (!has_permission(dat_st.st_mode, context->role, S_IWUSR, S_IWGRP)) {
+        printf("Eroare de conformitate: Rolul '%s' nu are drept de scriere pe %s conform bitilor actuali.\n", context->role, dat_path);
+        return;
     }
 
     if (stat(cfg_path, &cfg_st) == -1) {
@@ -244,7 +248,6 @@ void add_report(AppContext *context) {
         write(log_fd, log_msg, strlen(log_msg)); 
         close(log_fd);
     }
-
 }
 
 
@@ -370,11 +373,19 @@ void remove_report(AppContext *context) {
     char dat_path[256];
     snprintf(dat_path, sizeof(dat_path), "%s/reports.dat", context->district);
 
-    int fd = open(dat_path, O_RDWR);
-    if (fd == -1) {
+    struct stat st_perm;
+
+    if (stat(dat_path, &st_perm) == -1) {
         printf("Eroare: Nu s-au gasit rapoarte pentru districtul %s.\n", context->district);
         return;
     }
+
+    if (!has_permission(st_perm.st_mode, context->role, S_IWUSR, 0)) { 
+        printf("Eroare de conformitate: Permisiunile de pe disc interzic stergerea pentru rolul '%s'.\n", context->role);
+        return;
+    }
+
+    int fd = open(dat_path, O_RDWR);
 
     Report rep;
     off_t target_offset = -1;
@@ -384,7 +395,6 @@ void remove_report(AppContext *context) {
             target_offset = lseek(fd, 0, SEEK_CUR) - sizeof(Report);
             //calculam offset-ul raportului gasit pentru a sti de unde sa incepem sa citim restul rapoartelor
             break;
-
         }
     }
 
